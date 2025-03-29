@@ -30,21 +30,8 @@ class ProductForm(ModelForm):
         model = Product
         fields = '__all__'
         widgets = {
-            'name': TextInput(
-                attrs={
-                    'placeholder': 'Ingrese un nombre',
-                }
-            ),
+            'name': TextInput(attrs={'placeholder': 'Ingrese nombre del producto'}),
+            'cate': Select(attrs={'class': 'form-control select2'}),
         }
 
-    # def save(self, commit=True):
-    #     data = {}
-    #     form = super()
-    #     try:
-    #         if form.is_valid():
-    #             form.save()
-    #         else:
-    #             data['error'] = form.errors
-    #     except Exception as e:
-    #         data['error'] = str(e)
-    #     return data
+    # Elimina el método save() personalizado que retornaba un diccionario

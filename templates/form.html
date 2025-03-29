@@ -1,43 +1,30 @@
 {% extends 'layout.html' %}
 {% load widget_tweaks %}
 {% block content %}
-    <form method="post" action="." enctype="multipart/form-data">
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
         <div class="card card-primary">
             <div class="card-header">
                 <h3 class="card-title">
-                    <i class="fas fa-plus"></i> {{ title }}
+                    <i class="fas fa-edit"></i> {{ title }}
                 </h3>
             </div>
             <div class="card-body">
-                {% csrf_token %}
-
-                {# Mensajes de éxito #}
-                {% if messages %}
-                    <div class="alert alert-success alert-dismissible">
-                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                        <h5><i class="icon fas fa-check"></i> Éxito!</h5>
-                        {% for message in messages %}
-                            {{ message }}
-                        {% endfor %}
-                    </div>
-                {% endif %}
-
-                {# Errores del formulario #}
                 {% if form.errors %}
                     <div class="alert alert-danger alert-dismissible">
                         <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                        <h5><i class="icon fas fa-ban"></i> Error al crear</h5>
+                        <h5><i class="icon fas fa-ban"></i> Errores en el formulario</h5>
                         <ul>
                             {% for field in form %}
-                                {% if field.errors %}
-                                    <li><strong>{{ field.label }}:</strong> {{ field.errors|striptags }}</li>
-                                {% endif %}
+                                {% for error in field.errors %}
+                                    <li>{{ field.label }}: {{ error }}</li>
+                                {% endfor %}
                             {% endfor %}
                         </ul>
                     </div>
                 {% endif %}
 
-                {# Campos del formulario #}
                 {% for field in form.visible_fields %}
                     <div class="form-group">
                         <label>{{ field.label }}{% if field.field.required %} <span class="text-danger">*</span>{% endif %}</label>
@@ -50,7 +37,7 @@
             </div>
             <div class="card-footer">
                 <button type="submit" class="btn btn-primary btn-flat">
-                    <i class="fas fa-save"></i> Crear categoría
+                    <i class="fas fa-save"></i> Actualizar categoría
                 </button>
                 <a href="{{ list_url }}" class="btn btn-danger btn-flat">
                     <i class="fas fa-times"></i> Cancelar

@@ -1,6 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import JsonResponse
+from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
@@ -90,25 +91,21 @@ class CategoryUpdateView(UpdateView):
         self.object = self.get_object()
         return super().dispatch(request, *args, **kwargs)
 
-    def post(self, request, *args, **kwargs):
-        data = {}
-        try:
-            action = request.POST['action']
-            if action == 'edit':
-                form = self.get_form()
-                data = form.save()
-            else:
-                data['error'] = 'No ha ingresado a ninguna opción'
-        except Exception as e:
-            data['error'] = str(e)
-        return JsonResponse(data)
+    def form_valid(self, form):
+        """Maneja un formulario válido"""
+        messages.success(self.request, '¡Categoría actualizada correctamente!')
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        """Maneja un formulario inválido"""
+        messages.error(self.request, 'Por favor corrija los errores en el formulario')
+        return super().form_invalid(form)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Edición una Categoria'
         context['entity'] = 'Categorias'
         context['list_url'] = reverse_lazy('erp:category_list')
-        context['action'] = 'edit'
         return context
 
 
@@ -123,12 +120,13 @@ class CategoryDeleteView(DeleteView):
         return super().dispatch(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
-        data = {}
         try:
             self.object.delete()
+            messages.success(request, '¡Registro eliminado correctamente!')
+            return redirect(self.success_url)
         except Exception as e:
-            data['error'] = str(e)
-        return JsonResponse(data)
+            messages.error(request, f'Error al eliminar: {str(e)}')
+            return redirect(self.success_url)  # O puedes renderizar el template nuevamente
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

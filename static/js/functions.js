@@ -14,4 +14,4 @@ function message_error(obj) {
         html: html,
         icon: 'error'
     });
-}
+};
