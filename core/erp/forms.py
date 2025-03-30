@@ -19,6 +19,7 @@ class CategoryForm(ModelForm):
                 'cols': 3
             }),
         }
+        exclude = ['user_updated', 'user_creation']
 
 
 class ProductForm(ModelForm):
