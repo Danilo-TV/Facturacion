@@ -1,0 +1,75 @@
+{% extends 'list.html' %}
+{% load widget_tweaks %}
+{% load static %}
+
+{% block head_list %}
+<!-- DataTables -->
+<link rel="stylesheet" href="{% static 'lib/datatables-1.10.20/css/jquery.dataTables.min.css' %}">
+<style>
+    /* Ocultamos completamente la tabla estructural */
+    .hidden-structure {
+        display: none !important;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+    <div class="card card-primary">
+        <div class="card-header">
+            <h3 class="card-title">
+                <i class="fas fa-plus"></i> Nuevo Cliente
+            </h3>
+        </div>
+        <form method="post" action="{% url 'erp:client_create' %}" enctype="multipart/form-data">
+            <div class="card-body">
+                {% csrf_token %}
+                <div class="container-fluid">
+                    {% for field in form.visible_fields %}
+                        <div class="form-group">
+                            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            {{ field|add_class:'form-control' }}
+                            {% for error in field.errors %}
+                                <span class="text-danger">{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="card-footer">
+                <button type="submit" class="btn btn-primary btn-flat">
+                    <i class="fas fa-save"></i> Guardar registro
+                </button>
+                <a href="{% url 'erp:client_list' %}" class="btn btn-danger btn-flat">
+                    <i class="fas fa-times"></i> Cancelar
+                </a>
+            </div>
+        </form>
+    </div>
+{% endblock %}
+
+{% block javascript %}
+<!-- DataTables -->
+<script src="{% static 'lib/datatables-1.10.20/js/jquery.dataTables.min.js' %}"></script>
+
+<script>
+$(document).ready(function() {
+    // Mostrar modal automáticamente al cargar la página
+    $('#myModal').modal({
+        backdrop: 'static',  // Evita que se cierre haciendo clic fuera
+        keyboard: false      // Evita que se cierre con ESC
+    });
+    
+    // Redirigir al listado si se cierra el modal
+    $('#myModal').on('hidden.bs.modal', function () {
+        window.location.href = "{% url 'erp:client_list' %}";
+    });
+
+    // Configuración básica de DataTable (necesaria aunque no muestre datos)
+    $('#data').DataTable({
+        language: {
+            url: "//cdn.datatables.net/plug-ins/1.10.20/i18n/Spanish.json"
+        }
+    });
+});
+</script>
+{% endblock %}

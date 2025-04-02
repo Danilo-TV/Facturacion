@@ -1,6 +1,8 @@
+from datetime import datetime
+
 from django.forms import *
 
-from core.erp.models import Category, Product
+from core.erp.models import Category, Product, Client
 
 
 class CategoryForm(ModelForm):
@@ -35,4 +37,41 @@ class ProductForm(ModelForm):
             'cate': Select(attrs={'class': 'form-control select2'}),
         }
 
-    # Elimina el método save() personalizado que retornaba un diccionario
+
+class ClientForm(ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['names'].widget.attrs['autofocus'] = True
+
+    class Meta:
+        model = Client
+        fields = '__all__'
+        wigets = {
+            'names': TextInput(
+                attrs={
+                    'placeholder': 'Ingrese sus nombres'
+                }
+            ),
+            'surnames': TextInput(
+                attrs={
+                    'placeholder': 'Ingrese sus apellidos',
+                }
+            ),
+            'dni': TextInput(
+                attrs={
+                    'placeholder': 'Ingrese su DNI',
+                }
+            ),
+            'date_birthday': DateInput(format='%Y-%m-%d',
+                attrs={
+                    'value': datetime.now().strftime('%Y-%m-%d'),
+                }
+            ),
+            'address': TextInput(
+                attrs={
+                    'placeholder': 'Ingrese su dirección',
+                }
+            ),
+            'gender': Select()
+        }
+        exclude = ['user_updated', 'user_creation']
