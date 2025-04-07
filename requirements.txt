@@ -1,0 +1,14 @@
+asgiref==3.8.1
+click==8.1.8
+colorama==0.4.6
+Django==4.2
+django-crum==0.7.9
+django-widget-tweaks==1.5.0
+pillow==11.1.0
+psycopg2==2.9.10
+setuptools==78.1.0
+six==1.17.0
+sqlparse==0.5.3
+svgwrite==1.4.3
+Tree==0.2.4
+tzdata==2025.1
