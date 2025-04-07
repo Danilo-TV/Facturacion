@@ -1,0 +1,73 @@
+{% extends 'layout.html' %}
+{% load static %}
+
+{% block content %}
+<div class="card card-danger">
+    <div class="card-header">
+        <h3 class="card-title">
+            <i class="fas fa-exclamation-triangle"></i>
+            Confirmar Eliminación
+        </h3>
+    </div>
+    <div class="card-body">
+        <p>¿Estás seguro de eliminar al cliente <strong>{{ object.names }} {{ object.surnames }}</strong>?</p>
+        <p>DNI: {{ object.dni }}</p>
+    </div>
+    <div class="card-footer">
+        <button type="button" class="btn btn-danger btn-flat" id="btnConfirmDelete">
+            <i class="fas fa-trash"></i> Sí, Eliminar
+        </button>
+        <a href="{% url 'erp:client_list' %}" class="btn btn-secondary btn-flat">
+            <i class="fas fa-times"></i> Cancelar
+        </a>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascript %}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('btnConfirmDelete').addEventListener('click', function() {
+        Swal.fire({
+            title: '¿Confirmar eliminación?',
+            text: "¡Esta acción no se puede deshacer!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Enviar la petición AJAX
+                fetch(window.location.href, {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire({
+                            title: '¡Eliminado!',
+                            text: data.message,
+                            icon: 'success',
+                            timer: 2000,
+                            showConfirmButton: false
+                        }).then(() => {
+                            window.location.href = data.redirect_url;
+                        });
+                    }
+                })
+                .catch(error => {
+                    Swal.fire('Error', 'No se pudo eliminar el cliente', 'error');
+                });
+            }
+        });
+    });
+});
+</script>
+{% endblock %}
