@@ -3,6 +3,7 @@ from core.erp.views.category.views import *
 from core.erp.views.client.views import *
 from core.erp.views.dashboard.views import *
 from core.erp.views.product.views import *
+from core.erp.views.tests.views import TestView
 
 app_name = 'erp'
 
@@ -24,4 +25,6 @@ urlpatterns = [
     path('client/delete/<int:pk>/', ClientDeleteView.as_view(), name='client_delete'),
     # home
     path('dashboard/', DashboardView.as_view(), name='dashboard'),
+    # test
+    path('test/', TestView.as_view(), name='test'),
 ]
