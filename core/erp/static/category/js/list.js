@@ -34,6 +34,4 @@ $(function () {
 
         }
     });
-
-    $('#myModalClient').modal('show');
 });

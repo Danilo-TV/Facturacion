@@ -1,29 +1,19 @@
-from crum import get_current_user
-from django.db import models
 from datetime import datetime
 
+from django.db import models
 from django.forms import model_to_dict
 
+from config.settings import MEDIA_URL, STATIC_URL
 from core.erp.choices import gender_choices
 from core.models import BaseModel
 
 
-class Category(BaseModel):
+class Category(models.Model):
     name = models.CharField(max_length=150, verbose_name='Nombre', unique=True)
     desc = models.CharField(max_length=500, null=True, blank=True, verbose_name='Descripción')
 
     def __str__(self):
         return self.name
-
-    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
-
-        user = get_current_user()
-        if user is not None:
-            if not self.pk:
-                self.user_creation = user
-            else:
-                self.user_update = user
-            super(Category, self).save()
 
     def toJSON(self):
         item = model_to_dict(self)
@@ -37,12 +27,24 @@ class Category(BaseModel):
 
 class Product(models.Model):
     name = models.CharField(max_length=150, verbose_name='Nombre', unique=True)
-    cate = models.ForeignKey(Category, on_delete=models.CASCADE)
-    image = models.ImageField(upload_to='product/%Y/%m/%d', null=True, blank=True)
-    pvp = models.DecimalField(default=0.00, max_digits=9, decimal_places=2)
+    cat = models.ForeignKey(Category, on_delete=models.CASCADE, verbose_name='Categoría', default=1)
+    image = models.ImageField(upload_to='product/%Y/%m/%d', null=True, blank=True, verbose_name='Imagen')
+    pvp = models.DecimalField(default=0.00, max_digits=9, decimal_places=2, verbose_name='Precio de venta')
 
     def __str__(self):
         return self.name
+
+    def toJSON(self):
+        item = model_to_dict(self)
+        item['cat'] = self.cat.toJSON()
+        item['image'] = self.get_image()
+        item['pvp'] = format(self.pvp, '.2f')
+        return item
+
+    def get_image(self):
+        if self.image:
+            return '{}{}'.format(MEDIA_URL, self.image)
+        return '{}{}'.format(STATIC_URL, 'img/empty.png')
 
     class Meta:
         verbose_name = 'Producto'
@@ -63,7 +65,7 @@ class Client(models.Model):
 
     def toJSON(self):
         item = model_to_dict(self)
-        item['gender'] = self.get_gender_display()
+        item['gender'] = {'id': self.gender, 'name': self.get_gender_display()}
         item['date_birthday'] = self.date_birthday.strftime('%Y-%m-%d')
         return item
 

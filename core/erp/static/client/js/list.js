@@ -1,8 +1,5 @@
-var tblClient;
- var modal_title;
-
-function getData() {
-    tblClient = $('#data').DataTable({
+$(function () {
+    $('#data').DataTable({
         responsive: true,
         autoWidth: false,
         destroy: true,
@@ -21,7 +18,7 @@ function getData() {
             {"data": "surnames"},
             {"data": "dni"},
             {"data": "date_birthday"},
-            {"data": "gender"},
+            {"data": "gender.name"},
             {"data": "id"},
         ],
         columnDefs: [
@@ -30,8 +27,8 @@ function getData() {
                 class: 'text-center',
                 orderable: false,
                 render: function (data, type, row) {
-                    var buttons = '<a href="#" class="btn btn-warning btn-xs btn-flat"><i class="fas fa-edit"></i></a> ';
-                    buttons += '<a href="#" type="button" class="btn btn-danger btn-xs btn-flat"><i class="fas fa-trash-alt"></i></a>';
+                    var buttons = '<a href="/erp/client/update/' + row.id + '/" class="btn btn-warning btn-xs btn-flat"><i class="fas fa-edit"></i></a> ';
+                    buttons += '<a href="/erp/client/delete/' + row.id + '/" type="button" class="btn btn-danger btn-xs btn-flat"><i class="fas fa-trash-alt"></i></a>';
                     return buttons;
                 }
             },
@@ -39,36 +36,5 @@ function getData() {
         initComplete: function (settings, json) {
 
         }
-    });
-}
-
-$(function () {
-
-    modal_title = $('.modal-title');
-
-    getData();
-
-    $('.btnAdd').on('click', function () {
-        $('input[name="action"]').val('add');
-        modal_title.find('span').html('Creación de un cliente');
-        console.log(modal_title.find('i'));
-        modal_title.find('i').removeClass().addClass('fas fa-plus');
-        $('form')[0].reset();
-        $('#myModalClient').modal('show');
-    });
-
-    $('#myModalClient').on('shown.bs.modal', function () {
-        $('form')[0].reset();
-    });
-
-    $('form').on('submit', function (e) {
-        e.preventDefault();
-        //var parameters = $(this).serializeArray();
-        var parameters = new FormData(this);
-        submit_with_ajax(window.location.pathname, 'Notificación', '¿Estas seguro de realizar la siguiente acción?', parameters, function () {
-            $('#myModalClient').modal('hide');
-            tblClient.ajax.reload();
-            //getData();
-        });
     });
 });
