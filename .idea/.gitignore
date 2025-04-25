@@ -173,5 +173,6 @@ depuración de cython/
 # y se puede agregar al gitignore global o fusionarlo en este archivo. Para una explicación más detallada
 # Opción (no recomendada) puedes descomentar lo siguiente para ignorar toda la carpeta de ideas.
 #.idea/
+*db.py
 
 # Fin de https://www.toptal.com/developers/gitignore/api/django

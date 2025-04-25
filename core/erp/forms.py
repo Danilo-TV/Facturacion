@@ -2,7 +2,7 @@ from datetime import datetime
 
 from django.forms import *
 
-from core.erp.models import Category, Product, Client
+from core.erp.models import Category, Product, Client, Sale
 
 
 class CategoryForm(ModelForm):
@@ -156,3 +156,27 @@ class TestForm(Form):
         'class': 'form-control select2',
         'style': 'width: 100%'
     }))
+
+
+class SaleForm(ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for form in self.visible_fields():
+            form.field.widget.attrs['class'] = 'form-control'
+            form.field.widget.attrs['autocomplete'] = 'off'
+        self.fields['cli'].widget.attrs['autofocus'] = True
+
+    class Meta:
+        model = Sale
+        fields = '__all__'
+        widgets = {
+            'cli': Select(attrs={
+                'class': 'form-control select2',
+                'style': 'width: 100%'
+            }),
+            'date_joined': DateInput(format='%Y-%m-%d',
+                                       attrs={
+                                           'value': datetime.now().strftime('%Y-%m-%d'),
+                                       }
+                                       ),
+        }
