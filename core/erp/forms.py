@@ -161,10 +161,6 @@ class TestForm(Form):
 class SaleForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        for form in self.visible_fields():
-            form.field.widget.attrs['class'] = 'form-control'
-            form.field.widget.attrs['autocomplete'] = 'off'
-        self.fields['cli'].widget.attrs['autofocus'] = True
 
     class Meta:
         model = Sale
@@ -174,9 +170,26 @@ class SaleForm(ModelForm):
                 'class': 'form-control select2',
                 'style': 'width: 100%'
             }),
-            'date_joined': DateInput(format='%Y-%m-%d',
-                                       attrs={
-                                           'value': datetime.now().strftime('%Y-%m-%d'),
-                                       }
-                                       ),
+            'date_joined': DateInput(
+                format='%Y-%m-%d',
+                attrs={
+                    'value': datetime.now().strftime('%Y-%m-%d'),
+                    'autocomplete': 'off',
+                    'class': 'form-control datetimepicker-input',
+                    'id': 'date_joined',
+                    'data-target': '#date_joined',
+                    'data-toggle': 'datetimepicker'
+                }
+            ),
+            'iva': TextInput(attrs={
+                'class': 'form-control',
+            }),
+            'subtotal': TextInput(attrs={
+                'readonly': True,
+                'class': 'form-control',
+            }),
+            'total': TextInput(attrs={
+                'readonly': True,
+                'class': 'form-control',
+            })
         }
