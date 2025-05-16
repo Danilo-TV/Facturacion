@@ -117,7 +117,34 @@ $(function () {
     }).on('change', function () {
         vents.calculate_invoice();
     })
-        .val(0.12);
+        .val(0.16);
+
+    // Obtén la tasa desde el template (Django la inyecta como variable global)
+    var tasa_bcv = parseFloat(window.tasa_bcv);
+
+    // Función para actualizar el total en bolívares
+    function actualizar_total_bs() {
+        var total_usd = parseFloat($('input[name="total"]').val());
+        if (isNaN(total_usd)) total_usd = 0;
+        if (isNaN(tasa_bcv) || tasa_bcv === 0) {
+            $('input[name="total_bs"]').val('0.00');
+        } else {
+            var total_bs = total_usd * tasa_bcv;
+            $('input[name="total_bs"]').val(total_bs.toFixed(2));
+        }
+    }
+
+    // Actualiza cuando cambie el total
+    $('input[name="total"]').on('input', actualizar_total_bs);
+    // Llama al cargar la página
+    actualizar_total_bs();
+
+    // También actualiza cuando se recalcula la factura
+    var original_calculate_invoice = vents.calculate_invoice;
+    vents.calculate_invoice = function () {
+        original_calculate_invoice.call(vents);
+        actualizar_total_bs();
+    };
 
     // search products
 

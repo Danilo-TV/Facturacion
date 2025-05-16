@@ -17,6 +17,9 @@
     <script src="{% static 'lib/bootstrap-touchspin-4.3.0/jquery.bootstrap-touchspin.js' %}"></script>
 
     <script src="{% static 'sale/js/form.js' %}"></script>
+    <script>
+    window.tasa_bcv = {{ tasa_bcv|default:"0.0" }};
+    </script>
 {% endblock %}
 
 {% block content %}
@@ -101,6 +104,17 @@
                             <div class="form-group">
                                 <label>Total a pagar:</label>
                                 {{ form.total }}
+                            </div>
+                            <div class="form-group">
+                                <label>Total en Bolívares:</label>
+                                <input type="text" class="form-control" readonly name="total_bs" value="0.00">
+                                {% if tasa_bcv %}
+                                    <small class="form-text text-muted">
+                                        Tasa BCV: {{ tasa_bcv|default:"0.0" }} Bs/USD
+                                    </small>
+                                {% else %}
+                                    <small class="form-text text-danger">No se pudo obtener la tasa BCV. Intente más tarde.</small>
+                                {% endif %}
                             </div>
                         </div>
                     </div>
